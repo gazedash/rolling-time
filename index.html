@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/vue@3"></script>
+    <title>Rolling Time</title>
+    <style></style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+      integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style scoped>
+      .clock {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        width: 150px;
+        height: 150px;
+        border: 2px solid;
+        border-radius: 100%;
+        text-align: center;
+        font-size: 14px;
+      }
+      .clock .hour {
+        position: absolute;
+        top: 0px;
+        left: 50%;
+        display: block;
+        width: 20px;
+        height: 50%;
+        margin-left: -10px;
+        padding-top: 4%;
+        font-weight: 400;
+        transform-origin: bottom;
+        user-select: none;
+        box-sizing: border-box;
+      }
+      .clock .hour > span {
+        display: block;
+      }
+      .clock .hour > span > i {
+        display: block;
+        font-style: normal;
+      }
+      .clock .hour:nth-of-type(2) {
+        transform: rotatez(30deg);
+      }
+      .clock .hour:nth-of-type(2) > span {
+        transform: rotatez(-30deg);
+      }
+      .clock .hour:nth-of-type(3) {
+        transform: rotatez(60deg);
+      }
+      .clock .hour:nth-of-type(3) > span {
+        transform: rotatez(-60deg);
+      }
+      .clock .hour:nth-of-type(4) {
+        transform: rotatez(90deg);
+      }
+      .clock .hour:nth-of-type(4) > span {
+        transform: rotatez(-90deg);
+      }
+      .clock .hour:nth-of-type(5) {
+        transform: rotatez(120deg);
+      }
+      .clock .hour:nth-of-type(5) > span {
+        transform: rotatez(-120deg);
+      }
+      .clock .hour:nth-of-type(6) {
+        transform: rotatez(150deg);
+      }
+      .clock .hour:nth-of-type(6) > span {
+        transform: rotatez(-150deg);
+      }
+      .clock .hour:nth-of-type(7) {
+        transform: rotatez(180deg);
+      }
+      .clock .hour:nth-of-type(7) > span {
+        transform: rotatez(-180deg);
+      }
+      .clock .hour:nth-of-type(8) {
+        transform: rotatez(210deg);
+      }
+      .clock .hour:nth-of-type(8) > span {
+        transform: rotatez(-210deg);
+      }
+      .clock .hour:nth-of-type(9) {
+        transform: rotatez(240deg);
+      }
+      .clock .hour:nth-of-type(9) > span {
+        transform: rotatez(-240deg);
+      }
+      .clock .hour:nth-of-type(10) {
+        transform: rotatez(270deg);
+      }
+      .clock .hour:nth-of-type(10) > span {
+        transform: rotatez(-270deg);
+      }
+      .clock .hour:nth-of-type(11) {
+        transform: rotatez(300deg);
+      }
+      .clock .hour:nth-of-type(11) > span {
+        transform: rotatez(-300deg);
+      }
+      .clock .hour:nth-of-type(12) {
+        transform: rotatez(330deg);
+      }
+      .clock .hour:nth-of-type(12) > span {
+        transform: rotatez(-330deg);
+      }
+      .clock .clock-circle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 16px;
+        height: 16px;
+        transform: translate(-50%, -50%);
+        border: 2px solid #666;
+        border-radius: 100%;
+        background-color: #fff;
+        z-index: 1;
+        box-sizing: border-box;
+      }
+      .clock .clock-circle:before {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: block;
+        content: "";
+        width: 4px;
+        height: 4px;
+        border-radius: 100%;
+        background-color: #666;
+      }
+      .clock .clock-hour,
+      .clock .clock-minute,
+      .clock .clock-second {
+        position: absolute;
+        top: 15%;
+        left: 50%;
+        display: block;
+        width: 2px;
+        height: 35%;
+        margin-left: -1px;
+        border-radius: 5px;
+        transform-origin: bottom;
+        background-color: #666;
+      }
+      .clock .clock-hour {
+        top: 30%;
+        width: 4px;
+        height: 20%;
+        margin-left: -2px;
+      }
+      .clock .clock-second {
+        width: 1px;
+      }
+      .clock.is-small {
+        width: 80px;
+        height: 80px;
+        border-width: 1px;
+        font-size: 12px;
+      }
+      .clock.is-small .clock-circle {
+        width: 10px;
+        height: 10px;
+        border-width: 1px;
+      }
+      .clock.is-small .clock-circle:before {
+        width: 2px;
+        height: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="p-3" id="app">
+      Rolling time
+      <br />
+      <br />
+      This simple app helps easily map time between different timezones, thanks
+      to synced hour arrow
+      <br />
+      Only for demonstration purposes
+      <br />
+      <br />
+      <div class="">
+        <div class="" v-for="type in types">
+          <span>{{ type.title }}</span>
+          <br />
+          <br />
+          <div class="row">
+            <div
+              class="col col-md-3 d-flex flex-column justify-content-center"
+              v-for="timezone in timeZones"
+            >
+              <br />
+              <br />
+              &nbsp;
+              <clock :type="type.value" :timezone="timezone"></clock>
+              <div>
+                {{ timezone === defaultTimeZoneOffset ? 'Your local timezone' :
+                '&nbsp;' }}
+              </div>
+              &nbsp;
+              <button
+                class="btn btn-danger"
+                @click="remove(timezone)"
+                :disabled="timezone === defaultTimeZoneOffset"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+          <br />
+        </div>
+        <!-- btns footer -->
+        <div class="row">
+          <div class="col col-md-3">
+            <input
+              placeholder="For GMT+8 type 8"
+              class="input form-control"
+              type="number"
+              v-model="newCustomTz"
+            />
+          </div>
+          <div class="col col-md-3">
+            <button class="w-100 btn btn-primary" @click="add">Add</button>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col col-md-3">
+            <button class="w-100 justify-content-center btn btn-danger" @click="reset">Reset</button>
+          </div>
+        </div>
+        <!-- btns -->
+      </div>
+    </div>
+
+    <script>
+      function offsetToDiff(offset) {
+        const _hour = (offset / 60) | 0;
+
+        const sign = -1 * Math.sign(_hour);
+        const hour = Math.abs(_hour);
+
+        const minute = Math.abs(offset % 60) / 60;
+
+        return sign * (hour + minute);
+      }
+
+      const getGMT = () => offsetToDiff(new Date().getTimezoneOffset());
+
+      const defaultTimeZoneOffset = getGMT();
+
+      // vue-clock
+      const Clock = {
+        template: `
+        <div class="d-flex flex-column">
+                  <div class="clock align-self-center" :style="clockStyle">
+                      <div class="clock-circle"></div>
+                      <div class="clock-hour" :style="{transform:hourRotate}"></div>
+                      <div class="clock-minute" :style="{transform:minuteRotate}"></div>
+                      <div class="clock-second" :style="{transform:secondRotate}"></div>
+                      <b class="hour" v-for="h in timeList" :key="h">
+                          <span>
+                              <i :style="{transform:clockStyle.rotateBack}">{{h}}</i>
+                          </span>
+                      </b>
+                  </div>
+                  <div>
+                    <br />
+                    GMT+{{ timezone }} {{ ampm }}
+                    <i class="fa" :class="ampm === 'am' ? 'fa-moon' : 'fa-sun'"></i>
+                    </div>
+                  </div>`,
+        data() {
+          return {
+            ampm: "",
+            rotate: 0,
+            timeList: [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+            // transform: "scale(1)",
+            hourRotate: "rotatez(0deg)",
+            minuteRotate: "rotatez(0deg)",
+            secondRotate: "rotatez(0deg)",
+          };
+        },
+        props: {
+          timezone: {
+            type: Number,
+            default: defaultTimeZoneOffset,
+          },
+          type: {
+            type: Number,
+            default: 0,
+          },
+          color: { type: String, default: "red" },
+          bg: {
+            type: String,
+            default: "white",
+          },
+          size: {
+            type: Number,
+            default: 150,
+          },
+          border: {
+            type: String,
+            default: "blue",
+          },
+        },
+        computed: {
+          clockStyle() {
+            return {
+              height: this.size,
+              width: this.size,
+              color: this.color,
+              border: this.border,
+              background: this.bg,
+              filter: this.ampm === "am" ? "invert(1)" : "",
+              transform: `rotatez(${this.rotate}deg)`,
+              rotateBack: `rotatez(${-1 * this.rotate}deg)`,
+            };
+          },
+        },
+        watch: {
+          time() {
+            this.show();
+          },
+        },
+        methods: {
+          show() {
+            this.showTime();
+            if (this._timer) clearInterval(this._timer);
+
+            this._timer = setInterval(() => {
+              this.showTime();
+            }, 1000);
+          },
+          showTime() {
+            const now = new Date();
+            const diffOffset = this.timezone - defaultTimeZoneOffset;
+
+            const diffHour = Math.floor(diffOffset);
+            const diffMinute = diffOffset - diffHour;
+
+            const mapTypes = {
+              0: 0,
+              // '1': -30 * this.timezone, // offset
+              2: -30 * diffOffset, // GMT+X = ;
+              // '3': 30 * diffOffset,
+            };
+
+            this.rotate = diffOffset === 0 ? 0 : mapTypes[this.type];
+
+            const ___hours = now.getHours() + diffHour;
+
+            const times = [
+              ___hours > 23 ? ___hours - 24 : ___hours,
+              now.getMinutes() + diffMinute,
+              now.getSeconds(),
+            ];
+
+            let hour = +times[0];
+
+            hour = hour > 11 ? hour - 12 : hour;
+            let minute = +times[1];
+            let second = +times[2] || 0;
+            let hourAngle = hour * 30 + ((minute * 6) / 360) * 30;
+            let minuteAngle = minute * 6;
+            let secondAngle = second * 6;
+            this.hourRotate = `rotatez(${hourAngle}deg)`;
+            this.minuteRotate = `rotatez(${minuteAngle}deg)`;
+            this.secondRotate = `rotatez(${secondAngle}deg)`;
+
+            console.log(times, this.timezone, hour);
+            this.ampm = hour >= 12 ? "pm" : "am";
+          },
+        },
+        mounted() {
+          let scale = this.$el.clientWidth / 120;
+          scale = scale > 3 ? 3 : scale;
+          this.transform = `scale(${scale})`;
+          this.show();
+        },
+        destroyed() {
+          if (this._timer) clearInterval(this._timer);
+        },
+      };
+
+      const lsKey = "timeZones";
+
+      const savedTimeZones =
+        localStorage
+          .getItem(lsKey)
+          ?.split(",")
+          ?.filter((tz) => tz)
+          ?.filter((tz) => Number.isInteger(parseInt(tz, 10)))
+          ?.map((tz) => parseInt(tz, 10)) || [];
+
+      const sampleTimeZone = 4;
+      const defaultTimeZones = [defaultTimeZoneOffset, sampleTimeZone];
+
+      const timeZones = savedTimeZones.length
+        ? savedTimeZones
+        : defaultTimeZones;
+
+      const app = Vue.createApp({
+        watch: {
+          timeZones() {
+            localStorage.setItem(lsKey, this.timeZones.join());
+          },
+        },
+        methods: {
+          reset() {
+            localStorage.clear();
+          },
+          add() {
+            this.timeZones.push(this.newCustomTz);
+            this.newCustomTz = null;
+          },
+          remove(tz) {
+            this.timeZones = this.timeZones.filter((t) => t !== tz);
+          },
+        },
+        data() {
+          return {
+            newCustomTz: null,
+            defaultTimeZoneOffset,
+            types: [
+              {
+                title: "Default clocks",
+                value: 0,
+              },
+              {
+                title: "Rotated clocks (synced by hour arrow)",
+                value: 2,
+              },
+            ],
+            timeZones,
+          };
+        },
+      });
+
+      app.component("clock", Clock);
+      app.mount("#app");
+    </script>
+    <!-- <script>
+        Vue.createApp({
+          methods: {
+            cccc: function () {},
+          },
+          mounted() {},
+          computed: {
+            bbb() {},
+            aaa() {},
+          },
+          watch: {
+            tttt: function (type) {},
+          },
+          data() {
+            return {};
+          },
+        }).mount("#app");
+      </script> -->
+  </body>
+</html>
