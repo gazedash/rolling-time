@@ -292,7 +292,7 @@
                   </div>
                   <div>
                     <br />
-                    GMT+{{ timezone }} {{ ampm }}
+                    GMT+{{ timezone }} {{ ampm.toUpperCase() }}
                     <i class="fa" :class="ampm === 'am' ? 'fa-moon' : 'fa-sun'"></i>
                     </div>
                   </div>`,
