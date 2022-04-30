@@ -234,6 +234,7 @@
         <div class="row">
           <div class="col col-md-3">
             <input
+              required
               placeholder="For GMT+8 type 8"
               class="input form-control"
               type="number"
@@ -286,18 +287,21 @@
                       <div class="clock-second" :style="{transform:secondRotate}"></div>
                       <b class="hour" v-for="h in timeList" :key="h">
                           <span>
-                              <i :style="{transform:clockStyle.rotateBack}">{{h}}</i>
+                              <i :style="{transform:clockStyle.rotateBack}">{{ h }}</i>
                           </span>
                       </b>
                   </div>
                   <div>
                     <br />
-                    GMT+{{ timezone }} {{ ampm.toUpperCase() }}
+                    GMT{{ Math.sign(timezone) >= 0 ? '+' : '-' }}{{ Math.abs(timezone) }}
                     <i class="fa" :class="ampm === 'am' ? 'fa-moon' : 'fa-sun'"></i>
+                    <br />
+                    {{ date }} {{ ampm.toUpperCase() }}
                     </div>
                   </div>`,
         data() {
           return {
+            date: "",
             ampm: "",
             rotate: 0,
             timeList: [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
@@ -394,8 +398,11 @@
             this.minuteRotate = `rotatez(${minuteAngle}deg)`;
             this.secondRotate = `rotatez(${secondAngle}deg)`;
 
-            console.log(times, this.timezone, hour);
             this.ampm = hour >= 12 ? "pm" : "am";
+            const newDate = new Date();
+            newDate.setHours(+times[0]);
+            newDate.setMinutes(+times[1]);
+            this.date = newDate.toLocaleString("de");
           },
         },
         mounted() {
@@ -428,8 +435,8 @@
 
       const app = Vue.createApp({
         watch: {
-          timeZones() {
-            localStorage.setItem(lsKey, this.timeZones.join());
+          timeZones(timeZones) {
+            localStorage.setItem(lsKey, timeZones.join());
           },
         },
         methods: {
@@ -437,10 +444,8 @@
             localStorage.clear();
           },
           add() {
-            if (this.newCustomTz) {
-              this.timeZones.push(this.newCustomTz);
-              this.newCustomTz = null;
-            }
+            this.timeZones = this.timeZones.concat(this.newCustomTz);
+            this.newCustomTz = null;
           },
           remove(tz) {
             this.timeZones = this.timeZones.filter((t) => t !== tz);
