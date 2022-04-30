@@ -247,7 +247,12 @@
         <br />
         <div class="row">
           <div class="col col-md-3">
-            <button class="w-100 justify-content-center btn btn-danger" @click="reset">Reset</button>
+            <button
+              class="w-100 justify-content-center btn btn-danger"
+              @click="reset"
+            >
+              Reset
+            </button>
           </div>
         </div>
         <!-- btns -->
@@ -432,8 +437,10 @@
             localStorage.clear();
           },
           add() {
-            this.timeZones.push(this.newCustomTz);
-            this.newCustomTz = null;
+            if (this.newCustomTz) {
+              this.timeZones.push(this.newCustomTz);
+              this.newCustomTz = null;
+            }
           },
           remove(tz) {
             this.timeZones = this.timeZones.filter((t) => t !== tz);
